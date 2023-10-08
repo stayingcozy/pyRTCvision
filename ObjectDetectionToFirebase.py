@@ -71,11 +71,17 @@ def main(image_processor, model, uid, debug=False, print_results=False):
 
     # How frequent to upload analytics to firebase unit: prediction iterations
     # A frame per second is gather so roughly predictions ~= seconds
-    uploadInterval = 5 # 180  
+    uploadInterval = 30 # 180  
 
     ay = Analytics(model, uid, uploadInterval)
+    files = get_jpg_files()
 
-    for file in get_jpg_files():
+    # for file in files:
+    while len(files) > 0:
+
+        # get first file
+        file = files[0]
+
         # Open File
         img = Image.open(file,mode='r')
 
@@ -96,11 +102,15 @@ def main(image_processor, model, uid, debug=False, print_results=False):
         else:
             delete_jpg_file(file)
 
+        files = get_jpg_files()
+
 
 if __name__ == "__main__":
 
     uid = "RJ0pPZEpmqPdiwMNBsuErIKU8zI3" # hardcode uid
-    debug = True   # if false delete every image after prediction/upload
+    debug = False   # if false delete every image after prediction/upload
 
     image_processor, model = init_manual_huggingface()
     main(image_processor, model, uid, debug)
+
+    print("ML Done")
