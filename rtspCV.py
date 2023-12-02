@@ -2,19 +2,28 @@ import cv2
 import inference
 import supervision as sv
 
-import matplotlib.pyplot as plt
-from PIL import ImageDraw
-
 # Local
+from Firebase import Firebase
 from Analytics import Analytics
 
+# init const
 annotator = sv.BoxAnnotator()
-debug = False   # if false delete every image after prediction/upload
+debug = False  
+model = "microsoft-coco/9"
+uploadInterval = 30 # 180  
+# export ROBOFLOW_API_KEY=your_key_here
+
+# debug
+# uid = "RJ0pPZEpmqPdiwMNBsuErIKU8zI3" # hardcode uid
+# source = "rtsp://user0:pass0@192.168.86.34:8554/mystream"
+
 
 def process(predictions, image):
 
-    ## Analytics import function ##
+    # Calculate movement analytics
     results = ay.analytics(predictions)
+
+    # If debug, print and viz out
     if debug:
 
         # Watch web app chart
@@ -32,20 +41,14 @@ def process(predictions, image):
         cv2.waitKey(1)
 
 
-## Firebase listen for new rtsp links to process
-uid = "RJ0pPZEpmqPdiwMNBsuErIKU8zI3" # hardcode uid
-source = "rtsp://user0:pass0@192.168.86.34:8554/mystream"
-model = "microsoft-coco/9"
-# api an environmental var
+# Firebase listen for new rtsp links to process
+firebase = Firebase()
+source, uid = firebase.streamingListen()
 
-uploadInterval = 30 # 180  
-ay = Analytics(model, uid, uploadInterval)
-# firebase = Firebase(uid)
+# init anayltics class instance
+ay = Analytics(model, uid, firebase, uploadInterval)
 
-
-## Inference import local function ##
-# in - rtsp link, model, api key
-# on prediction - output class of bbox coordinates
+# Intake RTSP stream and predict
 inference.Stream(
     source=source,
     model=model,

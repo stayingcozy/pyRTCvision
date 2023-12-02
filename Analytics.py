@@ -1,9 +1,8 @@
 import torch
 from RollingAverage import RollingAverage
-from Firebase import Firebase
 
 class Analytics():
-    def __init__(self, model, uid, uploadInterval=180):
+    def __init__(self, model, uid, firebase, uploadInterval=180):
         self.model = model
         self.predictionsMade = 0
         self.uploadInterval = uploadInterval
@@ -13,7 +12,7 @@ class Analytics():
         self.catroll = RollingAverage(uploadInterval) 
         self.personroll = RollingAverage(uploadInterval) 
 
-        self.fb = Firebase(uid)
+        self.fb = firebase
 
         self.acceptable_classes = ["dog", "cat", "person"]
         self.past_pred = {key: None for key in self.acceptable_classes}
