@@ -48,11 +48,12 @@ class Analytics():
         #     +----------------------+
         # (x, y + height)     (x + width, y + height)
         #
-        # x, y, width, height = tuple(box)
+        # x, y, x2, y2 = tuple(box)
+        # draw.rectangle((x, y, x2, y2), outline="red", width=1)
 
-        x, y, width, height = tuple(box)
-        xc = x + (width/2)
-        yc = y + (height/2)
+        x, y, x2, y2 = tuple(box)
+        xc = x + ((x2-x)/2)
+        yc = y + ((y2-y)/2)
 
         return [xc, yc]
 
@@ -77,31 +78,23 @@ class Analytics():
     def analytics(self, results):
 
         # break results to filter by class
-        labels = []
-        labels_id = []
-        scores = []
-        boxes =[]
-        for item in results["predictions"]:
-            labels.append(item["class"])
-            labels_id.append(item["class_id"])
-            scores.append(item["confidence"])
-            boxes.append([item['x'],item['y'],item['width'],item['height']])
+        scores = results["scores"]
+        labels = results["labels"]
+        boxes = results["boxes"]
 
         # Count set so if none detected activity of zero will be placed
         dogCount = 0
         catCount = 0
         personCount = 0
 
-        scores_tensor = torch.tensor(scores)
-        labels_id_tensor = torch.tensor(labels_id)
-        boxes_tensor = torch.tensor(boxes)
-        passedArray = torch.zeros(scores_tensor.size(), dtype=torch.bool)
-        passedBB = torch.zeros(boxes_tensor.size(), dtype=torch.bool)
+        passedArray = torch.zeros(scores.size(), dtype=torch.bool)
+        passedBB = torch.zeros(boxes.size(), dtype=torch.bool)
 
         iter = 0
-        for score, label, box in zip(scores, labels, boxes):
+        for score, label, box in zip(results["scores"], results["labels"], results["boxes"]):
+            box = [round(i, 2) for i in box.tolist()]
 
-            spelledOutLabel = label
+            spelledOutLabel = self.model.config.id2label[label.item()]
             if self._classFilter(spelledOutLabel):
                 passedArray[iter] = True
                 passedBB[iter,:] = True
@@ -144,11 +137,12 @@ class Analytics():
 
         self.predictionsMade += 1
 
-        results["scores"] = torch.masked_select(scores_tensor,passedArray)
-        results["labels"] = torch.masked_select(labels_id_tensor,passedArray)
-        results["boxes"] = torch.masked_select(boxes_tensor,passedBB)
+        results["scores"] = torch.masked_select(scores,passedArray)
+        results["labels"] = torch.masked_select(labels,passedArray)
+        results["boxes"] = torch.masked_select(boxes,passedBB)
 
         if (self.predictionsMade >= self.uploadInterval):
+            print("About to update firebase")
 
             self.fb.addData(self.dogroll.getAverage(), self.catroll.getAverage(), self.personroll.getAverage())
 
