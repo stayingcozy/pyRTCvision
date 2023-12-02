@@ -43,18 +43,25 @@ def process(predictions, image):
 
 # Firebase listen for new rtsp links to process
 firebase = Firebase()
-source, uid = firebase.streamingListen()
 
-# init anayltics class instance
-ay = Analytics(model, uid, firebase, uploadInterval)
+while True:
+    # Listen to streams in Firebase for status "streaming"
+    source, uid = firebase.streamingListen()
 
-# Intake RTSP stream and predict
-inference.Stream(
-    source=source,
-    model=model,
-    output_channel_order="BGR",
-    use_main_thread=True,
-    on_prediction=process,
-    api_key="api_key"
-)
+    # init anayltics class instance
+    ay = Analytics(model, uid, firebase, uploadInterval)
+
+    try:
+        # Intake RTSP stream and predict
+        inference.Stream(
+            source=source,
+            model=model,
+            output_channel_order="BGR",
+            use_main_thread=True,
+            on_prediction=process,
+            api_key="api_key"
+        )
+    except:
+        firebase.updateStreamAsBroken()
+        print("inference failed to process stream. Restarting") 
 
