@@ -48,6 +48,9 @@ while True:
     # Listen to streams in Firebase for status "streaming"
     source, uid = firebase.streamingListen()
 
+    # Update streaming to processing
+    firebase.updateStreamAsProcessing()
+
     # init anayltics class instance
     ay = Analytics(model, uid, firebase, uploadInterval)
 
