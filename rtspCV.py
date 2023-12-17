@@ -1,6 +1,7 @@
 from inference.core.interfaces.stream.inference_pipeline import InferencePipeline
 from inference.core.interfaces.camera.entities import VideoFrame
 from inference.core.interfaces.stream.sinks import render_boxes # debug
+import time
 
 # Local
 from Firebase import Firebase
@@ -10,7 +11,7 @@ from Analytics import Analytics
 debug = False  
 model = "microsoft-coco/9"
 uploadInterval = 180 # 180, 30  
-# export ROBOFLOW_API_KEY=your_key_here
+# export ROBOFLOW_API_KEY=your_key_here - REQUIRED
 
 # Firebase listen for new rtsp links to process
 firebase = Firebase()
@@ -29,6 +30,9 @@ while True:
 
     # Update streaming to processing
     firebase.updateStreamAsProcessing()
+
+    # If stream just started it needs time to boot
+    time.sleep(2)
 
     if debug:
         pipeline = InferencePipeline.init(
