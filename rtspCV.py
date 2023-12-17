@@ -14,7 +14,7 @@ uploadInterval = 180 # 180, 30
 # export ROBOFLOW_API_KEY=your_key_here - REQUIRED
 
 # Firebase listen for new rtsp links to process
-firebase = Firebase()
+firebase = Firebase(production=False)
 
 # init anayltics class instance
 ay = Analytics(model, firebase, uploadInterval)

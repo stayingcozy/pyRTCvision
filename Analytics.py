@@ -1,4 +1,4 @@
-import torch
+# import torch
 from RollingAverage import RollingAverage
 
 class Analytics():
@@ -87,19 +87,19 @@ class Analytics():
         catCount = 0
         personCount = 0
 
-        scores_tensor = torch.tensor(scores)
-        labels_id_tensor = torch.tensor(labels_id)
-        boxes_tensor = torch.tensor(boxes)
-        passedArray = torch.zeros(scores_tensor.size(), dtype=torch.bool)
-        passedBB = torch.zeros(boxes_tensor.size(), dtype=torch.bool)
+        # scores_tensor = torch.tensor(scores)
+        # labels_id_tensor = torch.tensor(labels_id)
+        # boxes_tensor = torch.tensor(boxes)
+        # passedArray = torch.zeros(scores_tensor.size(), dtype=torch.bool)
+        # passedBB = torch.zeros(boxes_tensor.size(), dtype=torch.bool)
 
         iter = 0
         for score, label, box in zip(scores, labels, boxes):
 
             spelledOutLabel = label
             if self._classFilter(spelledOutLabel):
-                passedArray[iter] = True
-                passedBB[iter,:] = True
+                # passedArray[iter] = True
+                # passedBB[iter,:] = True
 
                 bb_center = self._centerpoint(box)
                 pred_center = {spelledOutLabel: bb_center}
@@ -139,9 +139,9 @@ class Analytics():
 
         self.predictionsMade += 1
 
-        results["scores"] = torch.masked_select(scores_tensor,passedArray)
-        results["labels"] = torch.masked_select(labels_id_tensor,passedArray)
-        results["boxes"] = torch.masked_select(boxes_tensor,passedBB)
+        # results["scores"] = torch.masked_select(scores_tensor,passedArray)
+        # results["labels"] = torch.masked_select(labels_id_tensor,passedArray)
+        # results["boxes"] = torch.masked_select(boxes_tensor,passedBB)
 
         if (self.predictionsMade >= self.uploadInterval):
 
@@ -149,4 +149,4 @@ class Analytics():
 
             self.predictionsMade = 0
 
-        return results
+        # return results
