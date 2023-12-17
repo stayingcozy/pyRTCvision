@@ -2,11 +2,10 @@ import torch
 from RollingAverage import RollingAverage
 
 class Analytics():
-    def __init__(self, model, uid, firebase, uploadInterval=180):
+    def __init__(self, model, firebase, uploadInterval=180):
         self.model = model
         self.predictionsMade = 0
         self.uploadInterval = uploadInterval
-        self.uid = uid
 
         self.dogroll = RollingAverage(uploadInterval) 
         self.catroll = RollingAverage(uploadInterval) 
@@ -69,9 +68,6 @@ class Analytics():
 
         return distanceDifference
 
-    def uploadFirebase(self):
-        # Upload average activity to firebase
-        self.fb.addData(self.dogroll.getAverage(), self.catroll.getAverage(), self.personroll.getAverage())
 
     def analytics(self, results):
 
