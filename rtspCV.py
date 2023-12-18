@@ -22,7 +22,7 @@ ay = Analytics(model, firebase, uploadInterval)
 def on_prediction(predictions: dict, video_frame: VideoFrame) -> None:
 
     # Calculate movement analytics
-    _ = ay.analytics(predictions)
+    ay.analytics(predictions)
 
 while True:
     # Listen to streams in Firebase for status "streaming"
