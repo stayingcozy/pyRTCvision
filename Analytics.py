@@ -69,6 +69,38 @@ class Analytics():
         return distanceDifference
 
 
+    # def _labelCheckToIncrementHigherVersion(self, spelledOutLabel, distance_diff):
+    #     # Requires python 3.10 and up
+    #     # Based off class update rolling average
+    #     match spelledOutLabel:
+    #         case "dog":
+    #             self.dogroll.addValue(distance_diff)
+    #             dogCount += 1
+    #         case "cat":
+    #             self.catroll.addValue(distance_diff)
+    #             catCount += 1
+    #         case "person":
+    #             self.personroll.addValue(distance_diff)
+    #             personCount += 1
+    #         case _:
+    #             print("No accepted class found")
+
+    def _labelCheckToIncrement(self, spelledOutLabel, distance_diff, dogCount, catCount, personCount):
+        # Based off class update rolling average
+        if spelledOutLabel == "dog":
+            self.dogroll.addValue(distance_diff)
+            dogCount += 1
+        elif spelledOutLabel == "cat":
+            self.catroll.addValue(distance_diff)
+            catCount += 1
+        elif spelledOutLabel == "person":
+            self.personroll.addValue(distance_diff)
+            personCount += 1
+        else:
+            print("No accepted class found")
+
+        return dogCount, catCount, personCount
+
     def analytics(self, results):
 
         # break results to filter by class
@@ -109,19 +141,8 @@ class Analytics():
 
                     if (distance_diff > 0):
 
-                        # Based off class update rolling average
-                        match spelledOutLabel:
-                            case "dog":
-                                self.dogroll.addValue(distance_diff)
-                                dogCount += 1
-                            case "cat":
-                                self.catroll.addValue(distance_diff)
-                                catCount += 1
-                            case "person":
-                                self.personroll.addValue(distance_diff)
-                                personCount += 1
-                            case _:
-                                print("No accepted class found")
+                        # self._labelCheckToIncrementHigherVersion(spelledOutLabel, distance_diff)
+                        dogCount, catCount, personCount = self._labelCheckToIncrement(spelledOutLabel, distance_diff, dogCount, catCount, personCount)
 
                 # Record current prediction bb to past for next iter
                 self.past_pred[spelledOutLabel] = pred_center[spelledOutLabel]
