@@ -70,7 +70,7 @@ if __name__ == "__main__":
     model = "microsoft-coco/9"
     ROBOFLOW_API_KEY = "FwisbEr6bGeC7RAh5XXM"
     # other inits
-    inference_jetson_ip = "192.168.86.29" #"localhost"
+    inference_jetson_ip = "localhost"
     fps = 4
     jpgPath = './frames'
     uploadInterval = 30 #180  
