@@ -38,6 +38,14 @@ def process_frames(rtsp_stream_link, fps, output_folder):
         os.makedirs(output_folder)
 
     while True:
+        if frame_id == 1:
+            cap.release() # release past cap
+            cap = cv2.VideoCapture(rtsp_stream_link)
+        elif frame_id > 1:
+            # Read and discard several frames to clear the buffer
+            for _ in range(10):
+                cap.read()
+
         ret, frame = cap.read()
         if not ret:
             break
@@ -60,7 +68,7 @@ def process_frames(rtsp_stream_link, fps, output_folder):
         frame_id += 1
 
         # Sleep for a while to control the frame rate
-        time.sleep(1 / fps)
+        # time.sleep(1 / fps)
 
     cap.release()
 
