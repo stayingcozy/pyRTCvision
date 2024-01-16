@@ -105,12 +105,12 @@ class Analytics():
 
         # break results to filter by class
         labels = []
-        labels_id = []
+        # labels_id = []
         scores = []
         boxes =[]
         for item in results["predictions"]:
             labels.append(item["class"])
-            labels_id.append(item["class_id"])
+            # labels_id.append(item["class_id"])
             scores.append(item["confidence"])
             boxes.append([item['x'],item['y'],item['width'],item['height']])
 
